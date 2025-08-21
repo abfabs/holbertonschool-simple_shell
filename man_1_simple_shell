@@ -1,0 +1,100 @@
+.TH hsh 1 "August 2025" "0.1" "Simple Shell Manual"
+.SH NAME
+hsh \- simple UNIX command line interpreter
+.SH SYNOPSIS
+.B hsh
+.RI [ no\ options ]
+.SH DESCRIPTION
+.B hsh
+is a simple UNIX command line interpreter written in C.
+
+It provides a minimal shell interface that executes commands read
+from the standard input in either interactive or non-interactive mode.
+
+.SH FEATURES
+The shell provides the following features:
+
+.IP \[bu] 2
+Display a prompt and wait for the user to type a command.
+.IP \[bu]
+Execute simple commands with or without arguments.
+.IP \[bu]
+Handle the
+.B PATH
+environment variable to locate executables.
+.IP \[bu]
+Provide built-in commands:
+.RS
+.IP \[em] 4
+.B exit
+– exit the shell.
+.IP \[em]
+.B env
+– print the current environment.
+.RE
+.IP \[bu]
+Handle end of file (Ctrl+D).
+.IP \[bu]
+Provide error messages in the same format as
+.B /bin/sh .
+
+.SH USAGE
+.B Interactive mode:
+.PP
+.RS
+.nf
+$ ./hsh
+($) /bin/ls
+file1 file2 file3
+($) exit
+.fi
+.RE
+
+.B Non-interactive mode:
+.PP
+.RS
+.nf
+$ echo "/bin/ls" | ./hsh
+file1 file2 file3
+.fi
+.RE
+
+.SH EXIT STATUS
+The shell returns the exit status of the last executed command.
+If a command cannot be found, the exit status is
+.B 127 .
+If a command fails, the exit status is
+.B 2 .
+A successful command returns
+.B 0 .
+
+.SH FILES
+.TP
+.B main.c
+entry point of the shell.
+.TP
+.B execute_command.c
+execution of commands using fork and execve.
+.TP
+.B split_line.c
+splits the user input into tokens.
+.TP
+.B get_path.c
+handles path resolution.
+.TP
+.B utils.c
+helper functions.
+.TP
+.B hsh.h
+header file with prototypes.
+.TP
+.B man_simple_shell
+this manual page.
+
+.SH AUTHOR
+Written by Alba Eftimi.
+
+.SH SEE ALSO
+.BR sh (1),
+.BR bash (1),
+.BR execve (2)
