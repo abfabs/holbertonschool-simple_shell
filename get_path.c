@@ -5,28 +5,33 @@
 #include <unistd.h>
 
 /**
- * get_path - Resolves the full path of a command using PATH
- * @cmd: Command name
- * Return: Full path string (malloc'ed) or NULL
+ * try_direct_path - Checks if command includes '/' and is executable
+ * @cmd: Command string
+ *
+ * Return: Duplicated path string if executable, NULL otherwise
  */
-char *get_path(char *cmd)
+static char *try_direct_path(char *cmd)
 {
-	char *path_env, *path_dup, *dir, *full_path;
-	size_t len;
-
-	if (!cmd)
-		return (NULL);
-
 	if (strchr(cmd, '/'))
 	{
 		if (access(cmd, X_OK) == 0)
 			return (strdup(cmd));
 		return (NULL);
 	}
+	return (NULL);
+}
 
-	path_env = _getenv("PATH");
-	if (!path_env || path_env[0] == '\0')
-		return (NULL);
+/**
+ * search_in_path - Searches PATH directories for a command
+ * @cmd: Command string
+ * @path_env: PATH environment variable
+ *
+ * Return: Full path string if found, NULL otherwise
+ */
+static char *search_in_path(char *cmd, char *path_env)
+{
+	char *path_dup, *dir, *full_path;
+	size_t len;
 
 	path_dup = strdup(path_env);
 	if (!path_dup)
@@ -56,4 +61,28 @@ char *get_path(char *cmd)
 
 	free(path_dup);
 	return (NULL);
+}
+
+/**
+ * get_path - Resolves the full path of a command using PATH
+ * @cmd: Command name
+ *
+ * Return: Full path string (malloc'ed) or NULL
+ */
+char *get_path(char *cmd)
+{
+	char *path_env, *resolved;
+
+	if (!cmd)
+		return (NULL);
+
+	resolved = try_direct_path(cmd);
+	if (resolved)
+		return (resolved);
+
+	path_env = _getenv("PATH");
+	if (!path_env || path_env[0] == '\0')
+		return (NULL);
+
+	return (search_in_path(cmd, path_env));
 }
