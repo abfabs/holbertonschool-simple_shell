@@ -6,8 +6,6 @@
 #include <sys/wait.h>
 #include <errno.h>
 
-extern char **environ;
-
 /**
  * fork_and_exec - Handles forking and execve call
  * @cmd_path: Full path to the command
